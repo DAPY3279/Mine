@@ -16,6 +16,11 @@ const cashOutButton = document.getElementById('cashOut');
 const profitNext = document.getElementById('profitNext');
 const totalProfit = document.getElementById('totalProfit');
 
+// Sound Effects
+const gemSound = document.getElementById('gemSound');
+const bombSound = document.getElementById('bombSound');
+const cashOutSound = document.getElementById('cashOutSound');
+
 // Event Listeners
 startButton.addEventListener('click', startGame);
 cashOutButton.addEventListener('click', cashOut);
@@ -73,37 +78,45 @@ function revealTile(e) {
   if (mineLocations.includes(tileId)) {
     tile.classList.add('bomb');
     tile.innerHTML = '<img src="bomb-icon.png" alt="Bomb">';
+    bombSound.play();
     gameOver();
   } else {
     tile.classList.add('gem');
     tile.innerHTML = '<img src="gem-icon.png" alt="Gem">';
+    gemSound.play();
     revealedTiles++;
     tile.classList.add('disabled');
-    updateProfit(revealedTiles * (betAmount / totalTiles));
+
+    // Calculate Profit
+    const currentProfit = calculateProfit();
+    updateProfit(currentProfit);
   }
 }
 
-function updateProfit(nextProfit) {
-  profit = revealedTiles * (betAmount / totalTiles);
-  profitNext.innerText = nextProfit.toFixed(2);
-  totalProfit.innerText = profit.toFixed(2);
+function calculateProfit() {
+  // Simple profit calculation (you can modify this logic)
+  return revealedTiles * (betAmount / numberOfMines);
+}
+
+function updateProfit(currentProfit) {
+  profitNext.innerText = currentProfit.toFixed(2);
+  totalProfit.innerText = (profit + currentProfit).toFixed(2);
 }
 
 function cashOut() {
+  if (!isGameActive) return;
+
+  cashOutSound.play();
+  profit += parseFloat(profitNext.innerText);
+  isGameActive = false;
+  cashOutButton.disabled = true;
   alert(`You cashed out with a profit of ${profit.toFixed(2)}!`);
   resetGame();
 }
 
 function gameOver() {
   isGameActive = false;
-  alert('You hit a bomb! Game over.');
-  disableTiles();
   cashOutButton.disabled = true;
-}
-
-function disableTiles() {
-  const tiles = document.querySelectorAll('.tile');
-  tiles.forEach(tile => {
-    tile.classList.add('disabled');
-  });
+  alert('Game over! You hit a bomb.');
+  resetGame();
 }

@@ -93,16 +93,22 @@ button:hover {
   align-items: center;
   border-radius: 10px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.3s ease;
   position: relative;
+}
+
+.tile:hover {
+  transform: scale(1.05);
 }
 
 .tile.gem {
   background-color: #9fd0ff;
+  animation: revealGem 0.5s ease;
 }
 
 .tile.bomb {
   background-color: #ff6f6f;
+  animation: revealBomb 0.5s ease;
 }
 
 .tile img {
@@ -113,10 +119,42 @@ button:hover {
   pointer-events: none;
 }
 
+@keyframes revealGem {
+  from { transform: scale(0); }
+  to { transform: scale(1); }
+}
+
+@keyframes revealBomb {
+  from { transform: scale(0); }
+  to { transform: scale(1); }
+}
+
 @media (max-width: 768px) {
   #gameBoard {
     grid-template-columns: repeat(5, 60px);
   }
 
   .tile {
-    width:
+    width: 60px;
+    height: 60px;
+  }
+
+  input {
+    width: 60px;
+  }
+}
+
+@media (max-width: 480px) {
+  #gameBoard {
+    grid-template-columns: repeat(5, 50px);
+  }
+
+  .tile {
+    width: 50px;
+    height: 50px;
+  }
+
+  input {
+    width: 50px;
+  }
+}
